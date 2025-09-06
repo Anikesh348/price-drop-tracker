@@ -4,6 +4,7 @@ export interface User {
     name: string,
     email: string, 
     password: string,
+    userId: string,
     profilePicture: string | undefined,
 }
 export const AuthService = {

@@ -5,6 +5,10 @@ import com.pricedrop.services.products.DeleteProduct;
 import com.pricedrop.services.products.GetPriceHistory;
 import com.pricedrop.services.products.GetProducts;
 import com.pricedrop.services.products.SaveProduct;
+import com.pricedrop.services.leetcode.AddQuestion;
+import com.pricedrop.services.leetcode.DeleteQuestion;
+import com.pricedrop.services.leetcode.GetQuestions;
+import com.pricedrop.services.leetcode.UpdateQuestionStatus;
 import com.pricedrop.services.mongo.MongoDBClient;
 import com.pricedrop.services.schedule.Schedule;
 import com.pricedrop.services.user.UserManagement;
@@ -65,6 +69,11 @@ public class PriceDropBaseVerticle extends AbstractVerticle {
                             .handler(context -> new GetPriceHistory(mongoDBClient, context));
                     router.post("/api/protected/delete")
                             .handler(context -> new DeleteProduct(mongoDBClient, context));
+                    router.post("/api/protected/leetcode/add").handler(new AddQuestion(mongoDBClient)::handle);
+                    router.get("/api/protected/leetcode/questions").handler(new GetQuestions(mongoDBClient)::handle);
+                    router.post("/api/protected/leetcode/update-status")
+                    .handler(new UpdateQuestionStatus(mongoDBClient)::handle);
+                    router.post("/api/protected/leetcode/delete").handler(new DeleteQuestion(mongoDBClient)::handle);
                     vertx.createHttpServer()
                             .requestHandler(router)
                             .listen(8080)

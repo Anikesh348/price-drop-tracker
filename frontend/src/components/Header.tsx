@@ -26,6 +26,8 @@ function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const specialUserId = "6711ecc6-43f0-47d5-8b1a-9526e91af024";
+
   return (
     <header className="w-full bg-white shadow-md border-b">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -43,6 +45,15 @@ function Header() {
               className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
             >
               Dashboard
+            </Link>
+          )}
+
+          {isAuthenticated && user?.userId === specialUserId && (
+            <Link
+              to="/leetcode"
+              className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+            >
+              Leetcode
             </Link>
           )}
 

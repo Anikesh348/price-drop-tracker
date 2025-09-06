@@ -1,10 +1,11 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { LogIn } from './auth/LogIn';
-import Register from './auth/Register';
-import Header from './Header';
-import { Landing } from './Landing';
-import Dashboard from './Dashboard';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { LogIn } from "./auth/LogIn";
+import Register from "./auth/Register";
+import Header from "./Header";
+import { Landing } from "./Landing";
+import Dashboard from "./Dashboard";
+import { Leetcode } from "./Leetcode";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/leetcode" element={<Leetcode />} />
         </Routes>
       </main>
     </div>
