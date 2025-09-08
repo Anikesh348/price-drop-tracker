@@ -65,12 +65,6 @@ class AmazonPlatform(ECommercePlatform):
         url = f"https://www.amazon.in/s?k={encoded_query}"
 
         try:
-            await page.set_extra_http_headers({
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                              "(KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
-                "Accept-Language": "en-US,en;q=0.9"
-            })
-            await page.set_viewport_size({"width": 1280, "height": 800})
             await page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
             await page.wait_for_selector("div.s-main-slot div.s-result-item", timeout=10000)
