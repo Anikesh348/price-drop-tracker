@@ -137,12 +137,12 @@ export const Leetcode = () => {
   return (
     <div className="max-w-full sm:w-[90%] md:w-[70%] mx-auto space-y-6 min-h-screen p-4">
       {/* Add Question Section */}
-      <div className="bg-white shadow-md rounded-xl p-4 sm:p-6 space-y-4">
-        <h2 className="text-lg sm:text-xl font-bold mb-2">
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-4 sm:p-6 space-y-4 transition-colors duration-300">
+        <h2 className="text-lg sm:text-xl font-bold mb-2 text-gray-900 dark:text-white">
           Add LeetCode Questions
         </h2>
         <textarea
-          className="w-full border rounded-lg p-2 resize-none"
+          className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
           rows={3}
           placeholder="Paste LeetCode URLs (comma or newline separated)"
           value={urls}
@@ -151,64 +151,77 @@ export const Leetcode = () => {
         <button
           onClick={handleSubmit}
           disabled={addingQuestions}
-          className="w-full py-2 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+          className="w-full py-2 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors duration-200"
         >
           {addingQuestions ? "Submitting..." : "Submit Questions"}
         </button>
       </div>
 
       {/* Questions Table */}
-      <div className="bg-white shadow-md rounded-xl p-4 sm:p-6 overflow-x-auto">
-        <h3 className="text-lg sm:text-xl font-semibold mb-3">
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-4 sm:p-6 overflow-x-auto transition-colors duration-300">
+        <h3 className="text-lg sm:text-xl font-semibold mb-3 text-gray-900 dark:text-white">
           Your Questions
         </h3>
 
         {loadingQuestions ? (
-          <p className="text-gray-500 animate-pulse">Loading questions...</p>
+          <p className="text-gray-500 dark:text-gray-400 animate-pulse">
+            Loading questions...
+          </p>
         ) : questions.length === 0 ? (
-          <p className="text-gray-500">No questions added yet.</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            No questions added yet.
+          </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] border-collapse border border-gray-300 text-sm">
-              <thead className="bg-gray-100">
+            <table className="w-full min-w-[600px] border-collapse border border-gray-300 dark:border-gray-600 text-sm">
+              <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                  <th className="border p-2 text-left">Question</th>
-                  <th className="border p-2 text-center">Solved</th>
-                  <th className="border p-2 text-center">Actions</th>
+                  <th className="border border-gray-300 dark:border-gray-600 p-2 text-left text-gray-900 dark:text-white">
+                    Question
+                  </th>
+                  <th className="border border-gray-300 dark:border-gray-600 p-2 text-center text-gray-900 dark:text-white">
+                    Solved
+                  </th>
+                  <th className="border border-gray-300 dark:border-gray-600 p-2 text-center text-gray-900 dark:text-white">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {questions.map((q) => (
-                  <tr key={q.questionId}>
-                    <td className="border p-2 break-all">
+                  <tr
+                    key={q.questionId}
+                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                  >
+                    <td className="border border-gray-300 dark:border-gray-600 p-2 break-all">
                       <a
                         href={q.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200"
                       >
                         {q.url}
                       </a>
                     </td>
-                    <td className="border p-2 text-center">
+                    <td className="border border-gray-300 dark:border-gray-600 p-2 text-center">
                       <input
                         type="checkbox"
                         checked={q.status === "solved"}
                         onChange={() => toggleSolved(q.questionId)}
                         disabled={updatingQuestionId === q.questionId}
-                        className="h-4 w-4"
+                        className="h-4 w-4 text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-2"
                       />
                       {updatingQuestionId === q.questionId && (
-                        <span className="ml-2 text-gray-500 text-xs">
+                        <span className="ml-2 text-gray-500 dark:text-gray-400 text-xs">
                           Updating...
                         </span>
                       )}
                     </td>
-                    <td className="border p-2 text-center">
+                    <td className="border border-gray-300 dark:border-gray-600 p-2 text-center">
                       <button
                         onClick={() => handleDelete(q.questionId)}
                         disabled={deletingQuestionId === q.questionId}
-                        className="px-3 py-1 text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:bg-gray-400"
+                        className="px-3 py-1 text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 rounded-lg disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors duration-200"
                       >
                         {deletingQuestionId === q.questionId
                           ? "Deleting..."
