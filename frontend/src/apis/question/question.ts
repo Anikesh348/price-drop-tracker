@@ -22,7 +22,7 @@ export const LeetCodeService = {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage .getItem("authToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       },
     };
@@ -54,6 +54,22 @@ export const LeetCodeService = {
         body: JSON.stringify({
           questionId,
           status,
+        }),
+      },
+    };
+  },
+  updateQuestionNotes: (questionId: string, notes: string) => {
+    return {
+      url: `${BASE_URL}/api/protected/leetcode/update-notes`,
+      options: {
+        method: "POST", // or PATCH if backend supports
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          questionId,
+          notes,
         }),
       },
     };

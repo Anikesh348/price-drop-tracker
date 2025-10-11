@@ -16,6 +16,9 @@ export const Leetcode = () => {
     null
   );
 
+  const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
+  const [notesDraft, setNotesDraft] = useState<string>("");
+
   const fetchedRef = useRef(false);
 
   // Hooks for fetching, adding, updating, deleting questions
@@ -34,6 +37,7 @@ export const Leetcode = () => {
 
   const { data: updateData, fetchData: updateQuestionApi } = useApiFetcher();
   const { data: deleteData, fetchData: deleteQuestionApi } = useApiFetcher();
+  const { data: updateNotesData, fetchData: updateNotesApi } = useApiFetcher();
 
   // Fetch questions
   const fetchQuestions = () => {
@@ -63,6 +67,7 @@ export const Leetcode = () => {
           ...q,
           questionId: q?.questionId ?? q?._id,
           status: q?.status || "unsolved",
+          notes: q?.notes || "",
         }));
         setQuestions(normalized);
       } else if (body.success) {
@@ -70,6 +75,7 @@ export const Leetcode = () => {
           ...q,
           questionId: q?.questionId ?? q?._id,
           status: q?.status || "unsolved",
+          notes: q?.notes || "",
         }));
         setQuestions(normalized);
       }
@@ -133,6 +139,23 @@ export const Leetcode = () => {
       setDeletingQuestionId(null);
     }
   }, [deleteData]);
+
+  // Notes handlers
+  const handleSaveNotes = (questionId: string) => {
+    const { url, options } = LeetCodeService.updateQuestionNotes(
+      questionId,
+      notesDraft
+    );
+    updateNotesApi(url, options);
+  };
+
+  useEffect(() => {
+    if (updateNotesData?.status === 200) {
+      fetchQuestions();
+      setEditingNotesId(null);
+      setNotesDraft("");
+    }
+  }, [updateNotesData]);
 
   return (
     <div className="max-w-full sm:w-[90%] md:w-[70%] mx-auto space-y-6 min-h-screen p-4">
@@ -202,6 +225,11 @@ export const Leetcode = () => {
                       >
                         {q.url}
                       </a>
+                      {q.notes && editingNotesId !== q.questionId && (
+                        <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                          Notes: {q.notes}
+                        </p>
+                      )}
                     </td>
                     <td className="border border-gray-300 dark:border-gray-600 p-2 text-center">
                       <input
@@ -217,16 +245,55 @@ export const Leetcode = () => {
                         </span>
                       )}
                     </td>
-                    <td className="border border-gray-300 dark:border-gray-600 p-2 text-center">
-                      <button
-                        onClick={() => handleDelete(q.questionId)}
-                        disabled={deletingQuestionId === q.questionId}
-                        className="px-3 py-1 text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 rounded-lg disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors duration-200"
-                      >
-                        {deletingQuestionId === q.questionId
-                          ? "Deleting..."
-                          : "Delete"}
-                      </button>
+                    <td className="border border-gray-300 dark:border-gray-600 p-2 text-center flex gap-2 justify-center">
+                      {editingNotesId === q.questionId ? (
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            value={notesDraft}
+                            onChange={(e) => setNotesDraft(e.target.value)}
+                            rows={3}
+                            className="w-48 border border-gray-300 dark:border-gray-600 rounded-lg p-2 resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          />
+                          <div className="flex gap-2 justify-center">
+                            <button
+                              onClick={() => handleSaveNotes(q.questionId)}
+                              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingNotesId(null);
+                                setNotesDraft("");
+                              }}
+                              className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setEditingNotesId(q.questionId);
+                              setNotesDraft(q.notes || "");
+                            }}
+                            className="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors duration-200"
+                          >
+                            Notes
+                          </button>
+                          <button
+                            onClick={() => handleDelete(q.questionId)}
+                            disabled={deletingQuestionId === q.questionId}
+                            className="px-3 py-1 text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 rounded-lg disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors duration-200"
+                          >
+                            {deletingQuestionId === q.questionId
+                              ? "Deleting..."
+                              : "Delete"}
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

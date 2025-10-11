@@ -13,7 +13,8 @@ public class LeetCodeQuestion {
     private Boolean solved;   
     private Instant createdAt;
     private Instant updatedAt;
-    private List<String> tags; 
+    private List<String> tags;
+    private String notes = "";
 
     public LeetCodeQuestion() {
     }
@@ -80,5 +81,13 @@ public class LeetCodeQuestion {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
