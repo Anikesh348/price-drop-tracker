@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { LogOut, Menu, X, ArrowLeft } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { useNotification } from "../context/NotificationContext";
 
 function Header() {
   const location = useLocation().pathname;
@@ -10,6 +11,7 @@ function Header() {
   const isNotLoginOrRegister =
     location !== "/login" && location !== "/register";
   const { isAuthenticated, logout, user } = useAuth();
+  const { addNotification } = useNotification();
   const showSignIn = !isAuthenticated && isNotLoginOrRegister;
 
   const [open, setOpen] = useState(false);
@@ -122,6 +124,11 @@ function Header() {
                   <button
                     onClick={() => {
                       logout();
+                      addNotification(
+                        "Logged Out Successfully!",
+                        "success",
+                        3000
+                      );
                       setOpen(false);
                     }}
                     className="w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2 transition-colors"
@@ -191,6 +198,11 @@ function Header() {
                 <button
                   onClick={() => {
                     logout();
+                    addNotification(
+                      "Logged Out Successfully!",
+                      "success",
+                      3000
+                    );
                     setMobileMenuOpen(false);
                   }}
                   className="w-full text-left py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center gap-2 transition-colors rounded-md"
