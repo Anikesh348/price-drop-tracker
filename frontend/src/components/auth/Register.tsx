@@ -4,10 +4,12 @@ import { useApiFetcher } from "../../hooks/useApiFetcher";
 import { useNavigate, Link } from "react-router-dom";
 import { Loader } from "../Loader";
 import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 
 function Register() {
   const { loading, data, error, fetchData } = useApiFetcher();
   const { login, isAuthenticated } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [user, setUser] = useState({
     name: "",
@@ -73,18 +75,22 @@ function Register() {
 
   useEffect(() => {
     if (data && data?.status === 200) {
+      addNotification("Registration successful!", "success");
       if (data.body?.token) {
         // If registration auto-logs in
         login(data.body.token, data.body.user);
         navigate("/");
       } else {
         // If registration doesn't auto-login, redirect to login
-        navigate("/login", {
-          state: { message: "Account created successfully! Please log in." },
-        });
+        navigate("/login");
       }
+    } else if (data && data?.status !== 200) {
+      addNotification(
+        data?.body?.message || "Registration failed. Please try again.",
+        "error"
+      );
     }
-  }, [data, error, navigate, login]);
+  }, [data, error, navigate, login, addNotification]);
 
   const isFormValid =
     user.name.trim() !== "" &&

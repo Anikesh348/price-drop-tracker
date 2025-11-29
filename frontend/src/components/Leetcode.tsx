@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Filters from "./Filters";
 import { Loader } from "./Loader";
+import { useNotification } from "../context/NotificationContext";
 
 export const Leetcode = () => {
   const { authToken, isAuthLoading } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [urls, setUrls] = useState("");
   const [questions, setQuestions] = useState<any[]>([]);
@@ -109,10 +111,16 @@ export const Leetcode = () => {
 
   useEffect(() => {
     if (addData?.status === 200) {
+      addNotification("Questions added successfully!", "success");
       fetchQuestions(); // refetch updated list
       setUrls("");
+    } else if (addData?.status && addData.status !== 200) {
+      addNotification(
+        addData?.body?.message || "Failed to add questions",
+        "error"
+      );
     }
-  }, [addData]);
+  }, [addData, addNotification]);
 
   // Toggle solved/unsolved
   const toggleSolved = (questionId: string) => {
@@ -133,10 +141,14 @@ export const Leetcode = () => {
 
   useEffect(() => {
     if (updateData?.status === 200) {
+      addNotification("Question status updated!", "success");
       fetchQuestions();
       setUpdatingQuestionId(null);
+    } else if (updateData?.status && updateData.status !== 200) {
+      addNotification("Failed to update question status", "error");
+      setUpdatingQuestionId(null);
     }
-  }, [updateData]);
+  }, [updateData, addNotification]);
 
   // Delete question
   const handleDelete = (questionId: string) => {
@@ -147,10 +159,14 @@ export const Leetcode = () => {
 
   useEffect(() => {
     if (deleteData?.status === 200) {
+      addNotification("Question deleted successfully!", "success");
       fetchQuestions();
       setDeletingQuestionId(null);
+    } else if (deleteData?.status && deleteData.status !== 200) {
+      addNotification("Failed to delete question", "error");
+      setDeletingQuestionId(null);
     }
-  }, [deleteData]);
+  }, [deleteData, addNotification]);
 
   // Notes handlers
   const handleSaveNotes = (questionId: string) => {
@@ -163,11 +179,14 @@ export const Leetcode = () => {
 
   useEffect(() => {
     if (updateNotesData?.status === 200) {
+      addNotification("Notes updated successfully!", "success");
       fetchQuestions();
       setEditingNotesId(null);
       setNotesDraft("");
+    } else if (updateNotesData?.status && updateNotesData.status !== 200) {
+      addNotification("Failed to update notes", "error");
     }
-  }, [updateNotesData]);
+  }, [updateNotesData, addNotification]);
 
   // derive tags options from questions
   useEffect(() => {
@@ -247,31 +266,31 @@ export const Leetcode = () => {
         </header>
 
         {/* Add Question Section */}
-        <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-2xl p-8 mb-8 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-slate-900/20 dark:to-blue-900/10 backdrop-blur-md">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center text-lg font-bold">
+        <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-slate-900/20 dark:to-blue-900/10 backdrop-blur-md">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center text-sm sm:text-lg font-bold flex-shrink-0">
                 +
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Add LeetCode Questions
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                Add Questions
               </h2>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 ml-13">
-              Paste LeetCode question URLs to start tracking your practice
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 sm:ml-14">
+              Paste LeetCode URLs to track your practice
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="relative">
               <textarea
-                className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-xl p-4 resize-none bg-white dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-mono text-sm"
+                className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-xl p-3 sm:p-4 resize-none bg-white dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-mono text-xs sm:text-sm"
                 rows={4}
-                placeholder="Paste LeetCode URLs (comma or newline separated)&#10;Example: https://leetcode.com/problems/two-sum/&#10;Or paste multiple URLs, one per line"
+                placeholder="Paste URLs (comma or new line)&#10;Example: https://leetcode.com/problems/two-sum/"
                 value={urls}
                 onChange={(e) => setUrls(e.target.value)}
               />
-              <div className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-500">
+              <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 text-xs text-gray-400 dark:text-gray-500">
                 {urls.split(/\n|,/).filter((u) => u.trim().length > 0).length >
                   0 && (
                   <span>
@@ -285,25 +304,24 @@ export const Leetcode = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                💡 Tip: You can paste multiple URLs separated by commas or new
-                lines
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-xs text-gray-500 dark:text-gray-400 order-2 sm:order-1">
+                💡 Separate by comma or new line
               </div>
               <button
                 onClick={handleSubmit}
                 disabled={addingQuestions || urls.trim().length === 0}
-                className="sm:ml-auto py-3 px-8 rounded-xl text-white font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2"
+                className="order-1 sm:order-2 w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-8 rounded-lg sm:rounded-xl text-white font-semibold text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <span>✓</span>
-                {addingQuestions ? "Submitting..." : "Submit Questions"}
+                {addingQuestions ? "Submitting..." : "Submit"}
               </button>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Filters
             difficulty={difficultyFilter}
             solved={solvedFilter}
@@ -321,64 +339,178 @@ export const Leetcode = () => {
 
         {/* Applied Tags Section */}
         {appliedTags.length > 0 && (
-          <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mb-8">
-            <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+          <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
+            <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Applied Filters
+              Filters
             </h2>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="font-semibold text-gray-700 dark:text-gray-300">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className="font-semibold text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                 Tags:
               </span>
               {appliedTags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700"
+                  className="px-2.5 sm:px-4 py-1 sm:py-2 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-300 text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-700 truncate"
                 >
                   {tag}
                 </span>
               ))}
               {appliedOperation && (
-                <span className="px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-semibold border border-purple-300 dark:border-purple-700">
+                <span className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-semibold border border-purple-300 dark:border-purple-700 whitespace-nowrap">
                   {appliedOperation === "union" ? "Union" : "Intersection"}
                 </span>
               )}
               <button
                 onClick={handleResetTags}
-                className="ml-auto px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 text-sm font-semibold transition-colors duration-200 border border-red-200 dark:border-red-800"
+                className="ml-auto px-2.5 sm:px-4 py-1 sm:py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 text-xs sm:text-sm font-semibold transition-colors duration-200 border border-red-200 dark:border-red-800 whitespace-nowrap"
               >
-                Reset Filters
+                Reset
               </button>
             </div>
           </div>
         )}
 
         {/* Questions Table */}
-        <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-2xl p-6 sm:p-8">
-          <h3 className="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
-            Your Questions
+        <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
+          <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900 dark:text-white">
+            Your Questions ({filteredQuestions.length})
           </h3>
 
           {loadingQuestions ? (
             <div className="flex justify-center items-center py-12">
               <Loader />
             </div>
-          ) : questions.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No questions added yet.
+          ) : filteredQuestions.length === 0 ? (
+            <div className="text-center py-8 sm:py-12">
+              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
+                No questions found. Try adjusting filters or add new questions.
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {filteredQuestions.map((q, idx) => (
                 <div
                   key={q.questionId}
-                  className="glass-card border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition-all duration-300"
+                  className="glass-card border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:shadow-md transition-all duration-300"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  {/* Mobile View - Stacked */}
+                  <div className="block sm:hidden space-y-3">
+                    {/* Header with number and title */}
+                    <div>
+                      <div className="flex items-start gap-2 mb-2">
+                        <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs">
+                          {idx + 1}
+                        </div>
+                        <a
+                          href={q.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors break-words flex-1"
+                        >
+                          {q.title !== undefined && q.title !== ""
+                            ? q.title
+                            : q.url}
+                        </a>
+                      </div>
+                      {q.notes && editingNotesId !== q.questionId && (
+                        <p className="text-xs text-gray-600 dark:text-gray-400 italic pl-9 truncate">
+                          📝 {q.notes}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Status and difficulty badges */}
+                    <div className="flex items-center gap-2">
+                      {q.difficulty && (
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-bold inline-block flex-shrink-0
+                            ${
+                              q.difficulty.toLowerCase() === "easy"
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                                : q.difficulty.toLowerCase() === "medium"
+                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                                : q.difficulty.toLowerCase() === "hard"
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                            }`}
+                        >
+                          {q.difficulty.charAt(0).toUpperCase() +
+                            q.difficulty.slice(1)}
+                        </span>
+                      )}
+
+                      <label className="flex items-center gap-2 cursor-pointer flex-1 justify-end">
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          {q.status === "solved" ? "✓ Solved" : "○ Unsolved"}
+                        </span>
+                        <input
+                          type="checkbox"
+                          checked={q.status === "solved"}
+                          onChange={() => toggleSolved(q.questionId)}
+                          disabled={updatingQuestionId === q.questionId}
+                          className="h-4 w-4 text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
+                        />
+                      </label>
+                    </div>
+
+                    {/* Notes editing - Mobile */}
+                    {editingNotesId === q.questionId ? (
+                      <div className="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <textarea
+                          value={notesDraft}
+                          onChange={(e) => setNotesDraft(e.target.value)}
+                          rows={2}
+                          className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs"
+                          placeholder="Add your notes..."
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => handleSaveNotes(q.questionId)}
+                            className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-teal-600 hover:shadow-md text-white text-xs font-medium rounded-lg transition-all"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingNotesId(null);
+                              setNotesDraft("");
+                            }}
+                            className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-medium rounded-lg transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 justify-end pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <button
+                          onClick={() => {
+                            setEditingNotesId(q.questionId);
+                            setNotesDraft(q.notes || "");
+                          }}
+                          className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-xs font-medium rounded-lg transition-all flex-1"
+                        >
+                          📝 Notes
+                        </button>
+                        <button
+                          onClick={() => handleDelete(q.questionId)}
+                          disabled={deletingQuestionId === q.questionId}
+                          className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium rounded-lg transition-all flex-1"
+                        >
+                          🗑️{" "}
+                          {deletingQuestionId === q.questionId
+                            ? "..."
+                            : "Delete"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Desktop View - Side by side */}
+                  <div className="hidden sm:flex sm:flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
                     {/* Left: Number & Question */}
-                    <div className="flex items-start gap-4 flex-1 min-w-0">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm">
                         {idx + 1}
                       </div>
@@ -387,14 +519,14 @@ export const Leetcode = () => {
                           href={q.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-base font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors break-words"
+                          className="text-sm lg:text-base font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors break-words"
                         >
                           {q.title !== undefined && q.title !== ""
                             ? q.title
                             : q.url}
                         </a>
                         {q.notes && editingNotesId !== q.questionId && (
-                          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
+                          <p className="mt-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 italic">
                             📝 {q.notes}
                           </p>
                         )}
@@ -402,57 +534,55 @@ export const Leetcode = () => {
                     </div>
 
                     {/* Middle: Difficulty & Status */}
-                    <div className="flex items-center gap-3 md:gap-4 flex-wrap md:flex-nowrap">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                       {q.difficulty && (
-                        <div>
-                          <span
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold inline-block
-                              ${
-                                q.difficulty.toLowerCase() === "easy"
-                                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                                  : q.difficulty.toLowerCase() === "medium"
-                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                                  : q.difficulty.toLowerCase() === "hard"
-                                  ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                                  : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                              }`}
-                          >
-                            {q.difficulty.charAt(0).toUpperCase() +
-                              q.difficulty.slice(1)}
-                          </span>
-                        </div>
+                        <span
+                          className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold inline-block flex-shrink-0
+                            ${
+                              q.difficulty.toLowerCase() === "easy"
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                                : q.difficulty.toLowerCase() === "medium"
+                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                                : q.difficulty.toLowerCase() === "hard"
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                            }`}
+                        >
+                          {q.difficulty.charAt(0).toUpperCase() +
+                            q.difficulty.slice(1)}
+                        </span>
                       )}
 
-                      <div className="flex items-center gap-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={q.status === "solved"}
                           onChange={() => toggleSolved(q.questionId)}
                           disabled={updatingQuestionId === q.questionId}
-                          className="h-5 w-5 text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
+                          className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 cursor-pointer"
                         />
-                        {updatingQuestionId === q.questionId && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            Updating...
-                          </span>
-                        )}
-                      </div>
+                        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                          {updatingQuestionId === q.questionId
+                            ? "..."
+                            : "Solved"}
+                        </span>
+                      </label>
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="flex gap-2 justify-end flex-wrap md:flex-nowrap">
+                    <div className="flex gap-2 justify-end flex-wrap lg:flex-nowrap">
                       {editingNotesId === q.questionId ? (
-                        <div className="w-full md:w-auto flex flex-col gap-2">
+                        <div className="w-full lg:w-auto flex flex-col gap-2">
                           <textarea
                             value={notesDraft}
                             onChange={(e) => setNotesDraft(e.target.value)}
                             rows={2}
-                            className="w-full md:w-48 border border-gray-300 dark:border-gray-600 rounded-lg p-2 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                            className="w-full lg:w-48 border border-gray-300 dark:border-gray-600 rounded-lg p-2 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs sm:text-sm"
                           />
                           <div className="flex gap-2 justify-end">
                             <button
                               onClick={() => handleSaveNotes(q.questionId)}
-                              className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-teal-600 hover:shadow-md text-white text-sm font-medium rounded-lg transition-all"
+                              className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-teal-600 hover:shadow-md text-white text-xs sm:text-sm font-medium rounded-lg transition-all"
                             >
                               Save
                             </button>
@@ -461,7 +591,7 @@ export const Leetcode = () => {
                                 setEditingNotesId(null);
                                 setNotesDraft("");
                               }}
-                              className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors"
+                              className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs sm:text-sm font-medium rounded-lg transition-colors"
                             >
                               Cancel
                             </button>
@@ -474,18 +604,18 @@ export const Leetcode = () => {
                               setEditingNotesId(q.questionId);
                               setNotesDraft(q.notes || "");
                             }}
-                            className="px-4 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-sm font-medium rounded-lg transition-all"
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-xs sm:text-sm font-medium rounded-lg transition-all whitespace-nowrap"
                           >
                             📝 Notes
                           </button>
                           <button
                             onClick={() => handleDelete(q.questionId)}
                             disabled={deletingQuestionId === q.questionId}
-                            className="px-4 py-1.5 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium rounded-lg transition-all"
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm font-medium rounded-lg transition-all whitespace-nowrap"
                           >
                             🗑️{" "}
                             {deletingQuestionId === q.questionId
-                              ? "Deleting..."
+                              ? "..."
                               : "Delete"}
                           </button>
                         </>

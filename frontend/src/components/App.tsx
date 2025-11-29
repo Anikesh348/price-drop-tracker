@@ -7,22 +7,27 @@ import { Landing } from "./Landing";
 import Dashboard from "./Dashboard";
 import { Leetcode } from "./Leetcode";
 import PriceTracker from "./PriceTracker";
+import { NotificationProvider } from "../context/NotificationContext";
+import { ToastContainer } from "./Toast";
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-      <Header />
-      <main className="flex-grow flex items-center justify-center">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/pricetracker" element={<PriceTracker />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/pricetracker/dashboard" element={<Dashboard />} />
-          <Route path="/leetcode" element={<Leetcode />} />
-        </Routes>
-      </main>
-    </div>
+    <NotificationProvider>
+      <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/pricetracker" element={<PriceTracker />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/pricetracker/dashboard" element={<Dashboard />} />
+            <Route path="/leetcode" element={<Leetcode />} />
+          </Routes>
+        </main>
+        <ToastContainer />
+      </div>
+    </NotificationProvider>
   );
 }
 

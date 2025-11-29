@@ -4,10 +4,12 @@ import { AuthService } from "../../apis/auth/auth";
 import { Loader } from "../Loader";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { useNotification } from "../../context/NotificationContext";
 
 export const LogIn = () => {
   const { loading, data, error, fetchData } = useApiFetcher();
   const { login, isAuthenticated } = useAuth();
+  const { addNotification } = useNotification();
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -70,9 +72,15 @@ export const LogIn = () => {
   useEffect(() => {
     if (data && data.status === 200 && data.body?.token) {
       login(data.body.token, data.body.user);
+      addNotification("Login successful!", "success");
       navigate("/");
+    } else if (data && data.status !== 200) {
+      addNotification(
+        data?.body?.message || "Login failed. Please try again.",
+        "error"
+      );
     }
-  }, [data, error, login, navigate]);
+  }, [data, error, login, navigate, addNotification]);
 
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 

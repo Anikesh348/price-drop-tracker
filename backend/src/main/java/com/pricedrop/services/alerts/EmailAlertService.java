@@ -1,9 +1,11 @@
 package com.pricedrop.services.alerts;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
 
 public interface EmailAlertService {
-    String senderEmail = "anikeshthakur85@gmail.com";
+    Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    String senderEmail = dotenv.get("SENDER_EMAIL", "");
+
     Future<Void> sendEmail(String subject, String to, String body);
 }

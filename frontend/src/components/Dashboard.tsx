@@ -6,6 +6,7 @@ import { Loader } from "./Loader";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../apis/product/product";
 import { ArrowLeft } from "lucide-react";
+import { useNotification } from "../context/NotificationContext";
 
 const amazonIcon =
   "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg";
@@ -31,6 +32,7 @@ const formatINR = (price: string | number): string => {
 
 const Dashboard: React.FC = () => {
   const { authToken, isAuthLoading } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const { data, error, loading, fetchData: fetchProducts } = useApiFetcher();
   const { data: deleteResponse, fetchData: fetchDelete } = useApiFetcher();
@@ -53,10 +55,16 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (deleteResponse !== null && deleteResponse?.status === 200) {
+      addNotification("Product deleted successfully!", "success");
       const { url, options } = ProductService.getProduct();
       fetchProducts(url, options);
+    } else if (deleteResponse !== null && deleteResponse?.status !== 200) {
+      addNotification(
+        deleteResponse?.body?.message || "Failed to delete product",
+        "error"
+      );
     }
-  }, [deleteResponse]);
+  }, [deleteResponse, addNotification, fetchProducts]);
 
   const handleDelete = async (productId: string, targetPrice: string) => {
     if (!authToken) return;

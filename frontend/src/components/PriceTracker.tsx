@@ -9,9 +9,11 @@ import { Loader } from "./Loader";
 import { PromptModel } from "./PromptModal";
 import { useNavigate } from "react-router-dom";
 import { BarChart3 } from "lucide-react";
+import { useNotification } from "../context/NotificationContext";
 
 const PriceTracker = () => {
   const { isAuthenticated, updateSearchState, searchResults } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const { loading, data, error, fetchData } = useApiFetcher();
 
@@ -73,32 +75,25 @@ const PriceTracker = () => {
     if (productData != null) {
       setClickedProduct("");
       if (productData?.status === 200) {
-        setModelInfo({
-          isSuccess: true,
-          isOpen: true,
-          modelType: "product-insert",
-          message:
-            "Your Product is added! \n You will be notified when the price drops",
-        });
+        addNotification(
+          "Product added successfully! You'll be notified when the price drops.",
+          "success"
+        );
         setProductUrl("");
         setTargetPrice("");
       } else if (productData?.status === 400) {
-        setModelInfo({
-          isSuccess: true,
-          isOpen: true,
-          modelType: "product-insert",
-          message: "Product with this target price already exists",
-        });
+        addNotification(
+          "Product with this target price already exists",
+          "warning"
+        );
       } else {
-        setModelInfo({
-          isSuccess: false,
-          isOpen: true,
-          modelType: "product-insert",
-          message: "Error inserting the product",
-        });
+        addNotification(
+          productData?.body?.message || "Error adding the product",
+          "error"
+        );
       }
     }
-  }, [productData]);
+  }, [productData, addNotification]);
 
   const handleLogin = () => {
     setModelInfo({
