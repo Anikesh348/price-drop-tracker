@@ -2,7 +2,6 @@ package com.pricedrop.services.products;
 
 import com.pricedrop.services.mongo.MongoDBClient;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -27,14 +26,9 @@ class GetProductsTest {
     @Test
     void testGetProductsConstructor(Vertx vertx, VertxTestContext testContext) {
         when(context.get("userId")).thenReturn("uid");
-        when(mongoDBClient.queryRecords(any(), any())).thenReturn(io.vertx.core.Future.succeededFuture(new java.util.ArrayList<>()));
-        // Mock Utility static methods to avoid NPE in Utility.buildResponse
-        try (var utilMock = org.mockito.Mockito.mockStatic(com.pricedrop.Utils.Utility.class)) {
-            utilMock.when(() -> com.pricedrop.Utils.Utility.buildResponse(any(), anyInt(), any())).thenAnswer(invocation -> null);
-            utilMock.when(() -> com.pricedrop.Utils.Utility.createErrorResponse(anyString())).thenReturn(new JsonObject());
-            utilMock.when(() -> com.pricedrop.Utils.Utility.castToClass(any(), any())).thenReturn(mock(com.pricedrop.models.Product.class));
-            new GetProducts(mongoDBClient, context);
-            testContext.completeNow();
-        }
+        when(mongoDBClient.queryRecords(any(), any()))
+                .thenReturn(io.vertx.core.Future.succeededFuture(new java.util.ArrayList<>()));
+        new GetProducts(mongoDBClient, context);
+        testContext.completeNow();
     }
 }

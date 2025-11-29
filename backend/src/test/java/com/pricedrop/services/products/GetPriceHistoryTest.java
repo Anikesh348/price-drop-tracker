@@ -29,13 +29,9 @@ class GetPriceHistoryTest {
         var requestBody = mock(io.vertx.ext.web.RequestBody.class);
         when(context.body()).thenReturn(requestBody);
         when(requestBody.asJsonObject()).thenReturn(new JsonObject().put("productId", "pid"));
-        when(mongoDBClient.queryRecords(any(), any())).thenReturn(io.vertx.core.Future.succeededFuture(new java.util.ArrayList<>()));
-        // Mock Utility static methods to avoid NPE in Utility.buildResponse
-        try (var utilMock = org.mockito.Mockito.mockStatic(com.pricedrop.Utils.Utility.class)) {
-            utilMock.when(() -> com.pricedrop.Utils.Utility.buildResponse(any(), anyInt(), any())).thenAnswer(invocation -> null);
-            utilMock.when(() -> com.pricedrop.Utils.Utility.createErrorResponse(anyString())).thenReturn(new JsonObject());
-            new GetPriceHistory(mongoDBClient, context);
-            testContext.completeNow();
-        }
+        when(mongoDBClient.queryRecords(any(), any()))
+                .thenReturn(io.vertx.core.Future.succeededFuture(new java.util.ArrayList<>()));
+        new GetPriceHistory(mongoDBClient, context);
+        testContext.completeNow();
     }
 }

@@ -13,6 +13,8 @@ pnpm-debug.log*
 
 # Local env files
 .env
+.env.dev
+.env.prod
 .env.*.local
 .env.local
 

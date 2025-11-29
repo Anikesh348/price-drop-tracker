@@ -83,14 +83,16 @@ const PriceChart: React.FC<PriceChartProps> = ({ productId }) => {
     return <p className="text-sm text-gray-500">No price history found.</p>;
 
   return (
-    <div className="w-full h-72">
-      <div className="flex justify-end mb-2 gap-2">
+    <div className="w-full h-72 flex flex-col">
+      <div className="flex justify-end mb-4 gap-2">
         {Object.keys(FILTERS).map((key) => (
           <button
             key={key}
             onClick={() => setSelectedRange(key as keyof typeof FILTERS)}
-            className={`px-3 py-1 rounded text-sm ${
-              selectedRange === key ? "bg-blue-600 text-white" : "bg-gray-200"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              selectedRange === key
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             {key}
@@ -98,30 +100,53 @@ const PriceChart: React.FC<PriceChartProps> = ({ productId }) => {
         ))}
       </div>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          margin={{ top: 20, right: 30, bottom: 40, left: 20 }}
-          data={filteredChartData}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 10 }}
-            angle={-45}
-            textAnchor="end"
-            height={60}
-          />
-          <YAxis
-            tickFormatter={(value) =>
-              `₹${value.toLocaleString("en-IN", {
-                maximumFractionDigits: 0,
-              })}`
-            }
-          />
-          <Tooltip formatter={(value) => `₹${value}`} />
-          <Line type="monotone" dataKey="price" stroke="#8884d8" />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="flex-1 w-full" style={{ minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            margin={{ top: 20, right: 30, bottom: 40, left: 20 }}
+            data={filteredChartData}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 10 }}
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis
+              tickFormatter={(value) =>
+                `₹${value.toLocaleString("en-IN", {
+                  maximumFractionDigits: 0,
+                })}`
+              }
+            />
+            <Tooltip
+              formatter={(value) => `₹${value}`}
+              contentStyle={{
+                backgroundColor: "rgba(255, 255, 255, 0.95)",
+                border: "1px solid #e5e7eb",
+                borderRadius: "0.5rem",
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              }}
+              labelStyle={{
+                color: "#1f2937",
+                fontWeight: "600",
+              }}
+              wrapperStyle={{
+                outline: "none",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="price"
+              stroke="#8884d8"
+              dot={{ fill: "#8884d8", r: 4 }}
+              activeDot={{ r: 6, fill: "#6366f1" }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

@@ -40,3 +40,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+### env ###
+.env
+.env.dev
+.env.prod

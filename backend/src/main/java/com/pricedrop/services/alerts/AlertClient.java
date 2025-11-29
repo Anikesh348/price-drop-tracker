@@ -9,6 +9,8 @@ import io.vertx.ext.web.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class AlertClient {
     private static final Logger log = LoggerFactory.getLogger(AlertClient.class);
     User user;

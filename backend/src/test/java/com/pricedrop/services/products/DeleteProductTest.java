@@ -31,12 +31,7 @@ class DeleteProductTest {
         when(context.get("userId")).thenReturn("uid");
         when(mongoDBClient.updateRecord(any(), any(), any())).thenReturn(io.vertx.core.Future.succeededFuture());
         when(mongoDBClient.deleteRecord(any(), any())).thenReturn(io.vertx.core.Future.succeededFuture());
-        try (var utilMock = org.mockito.Mockito.mockStatic(com.pricedrop.Utils.Utility.class)) {
-            utilMock.when(() -> com.pricedrop.Utils.Utility.buildResponse(any(), anyInt(), any())).thenAnswer(invocation -> null);
-            utilMock.when(() -> com.pricedrop.Utils.Utility.createSuccessResponse(anyString())).thenReturn(new JsonObject());
-            utilMock.when(() -> com.pricedrop.Utils.Utility.createErrorResponse(anyString())).thenReturn(new JsonObject());
-            new DeleteProduct(mongoDBClient, context);
-            testContext.completeNow();
-        }
+        new DeleteProduct(mongoDBClient, context);
+        testContext.completeNow();
     }
 }

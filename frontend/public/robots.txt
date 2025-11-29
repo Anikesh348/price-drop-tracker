@@ -1,0 +1,16 @@
+# ToolHub - Price Drop Tracker & LeetCode Manager
+# SEO Optimization for ToolHub, Price Tracker, Amazon Price Drop Tracker, LeetCode Manager
+
+User-agent: *
+Allow: /
+Allow: /pricetracker
+Allow: /leetcode
+Allow: /pricetracker/dashboard
+Disallow: /login
+Disallow: /register
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://toolhub.hostingfrompurva.com/sitemap.xml

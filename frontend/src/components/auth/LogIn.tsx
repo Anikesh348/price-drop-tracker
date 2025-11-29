@@ -3,7 +3,7 @@ import { useApiFetcher } from "../../hooks/useApiFetcher";
 import { AuthService } from "../../apis/auth/auth";
 import { Loader } from "../Loader";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const LogIn = () => {
   const { loading, data, error, fetchData } = useApiFetcher();
@@ -77,60 +77,90 @@ export const LogIn = () => {
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md mx-4">
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
-          Log In
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="email"
-              value={email}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(event) => setemail(event.target.value)}
-            />
+    <div className="min-h-screen w-full landing-bg transition-colors duration-300">
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-screen pt-16">
+        <div className="glass-card border border-gray-200 dark:border-gray-700 rounded-3xl p-8 w-full max-w-md mx-4 shadow-xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-2">
+              Welcome Back
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Log in to access ToolHub
+            </p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(event) => setPassword(event.target.value)}
-            />
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                onChange={(event) => setemail(event.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!isFormValid || loading}
+              className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                isFormValid && !loading
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg active:scale-95"
+                  : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {loading ? (
+                <div className="flex justify-center">
+                  <Loader />
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-3 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 font-medium">
+                Or continue with
+              </span>
+            </div>
           </div>
-          <button
-            type="submit"
-            disabled={!isFormValid}
-            className={`w-full py-3 rounded-lg font-semibold transition ${
-              isFormValid
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-400 text-gray-700 cursor-not-allowed"
-            }`}
-          >
-            {loading ? <Loader /> : "Sign In"}
-          </button>
-        </form>
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <a href="/register" className="text-blue-600 hover:underline">
-            Register
-          </a>
-        </p>
-        <p className="m-2 text-center text-sm text-gray-600">OR</p>
-        <div
-          style={{ display: "flex", justifyContent: "center" }}
-          id="google-signin-button"
-          className="m-2"
-        ></div>
+
+          <div
+            style={{ display: "flex", justifyContent: "center" }}
+            id="google-signin-button"
+            className="mb-6"
+          ></div>
+
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

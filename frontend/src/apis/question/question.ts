@@ -15,9 +15,16 @@ export const LeetCodeService = {
     };
   },
 
-  getQuestions: () => {
+  getQuestions: (tags?: string[], operation?: "union" | "intersection") => {
+    let url = `${BASE_URL}/api/protected/leetcode/questions`;
+    if (tags && tags.length > 0) {
+      const params = new URLSearchParams();
+      tags.forEach((tag) => params.append("tags", tag));
+      if (operation) params.append("operation", operation);
+      url += `?${params.toString()}`;
+    }
     return {
-      url: `${BASE_URL}/api/protected/leetcode/questions`,
+      url,
       options: {
         method: "GET",
         headers: {
@@ -71,6 +78,34 @@ export const LeetCodeService = {
           questionId,
           notes,
         }),
+      },
+    };
+  },
+
+  applyTags: (questionId: string, tags: string[]) => {
+    return {
+      url: `${BASE_URL}/api/protected/leetcode/applyTags`,
+      options: {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({ questionId, tags }),
+      },
+    };
+  },
+
+  filterWithTags: (tags: string[], operation: "union" | "intersection") => {
+    return {
+      url: `${BASE_URL}/api/protected/leetcode/filterWithTags`,
+      options: {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({ tags, operation }),
       },
     };
   },

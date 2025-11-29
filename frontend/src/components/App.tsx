@@ -6,6 +6,7 @@ import Header from "./Header";
 import { Landing } from "./Landing";
 import Dashboard from "./Dashboard";
 import { Leetcode } from "./Leetcode";
+import PriceTracker from "./PriceTracker";
 
 function App() {
   return (
@@ -14,9 +15,10 @@ function App() {
       <main className="flex-grow flex items-center justify-center">
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/pricetracker" element={<PriceTracker />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/pricetracker/dashboard" element={<Dashboard />} />
           <Route path="/leetcode" element={<Leetcode />} />
         </Routes>
       </main>

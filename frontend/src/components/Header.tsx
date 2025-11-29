@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, ArrowLeft } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 function Header() {
   const location = useLocation().pathname;
+  const navigate = useNavigate();
   const isNotLoginOrRegister =
     location !== "/login" && location !== "/register";
   const { isAuthenticated, logout, user } = useAuth();
   const showSignIn = !isAuthenticated && isNotLoginOrRegister;
-  const specialUserId = "6711ecc6-43f0-47d5-8b1a-9526e91af024";
 
   const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,37 +42,58 @@ function Header() {
     setMobileMenuOpen(false);
   }, [location]);
 
+  // Show a clickable Home link on /pricetracker and /leetcode
+  const showHome =
+    location.startsWith("/pricetracker") || location.startsWith("/leetcode");
+  const isLanding = location === "/";
+  const isAuthPage = location === "/login" || location === "/register";
+
   return (
-    <header className="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <header className="w-full glass-card fixed top-0 left-0 z-30 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
-          <Link
-            to="/"
-            className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 tracking-tight"
-          >
-            PriceDrop
-          </Link>
+          {isLanding ? (
+            <Link to="/" className="hover:opacity-80 transition">
+              <img
+                src="/favicon.png"
+                alt="ToolHub"
+                className="w-16 h-8 md:w-24 md:h-10"
+              />
+            </Link>
+          ) : showHome ? (
+            <Link to="/" className="hover:opacity-80 transition">
+              <img
+                src="/favicon.png"
+                alt="ToolHub"
+                className="w-16 h-8 md:w-24 md:h-10"
+              />
+            </Link>
+          ) : isAuthPage ? (
+            <Link to="/" className="hover:opacity-80 transition">
+              <img
+                src="/favicon.png"
+                alt="ToolHub"
+                className="w-16 h-8 md:w-24 md:h-10"
+              />
+            </Link>
+          ) : (
+            <div className="w-24" />
+          )}
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-          {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition-colors"
-            >
-              Dashboard
-            </Link>
-          )}
-
-          {isAuthenticated && user?.userId === specialUserId && (
-            <Link
-              to="/leetcode"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition-colors"
-            >
-              Leetcode
-            </Link>
-          )}
+          {/* Show Dashboard link only when on pricetracker and authenticated */}
+          {isAuthenticated &&
+            location.startsWith("/pricetracker") &&
+            !location.startsWith("/pricetracker/dashboard") && (
+              <Link
+                to="/pricetracker/dashboard"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition-colors"
+              >
+                Dashboard
+              </Link>
+            )}
 
           {showSignIn && (
             <Link
@@ -134,23 +155,17 @@ function Header() {
           className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-3 shadow-inner"
         >
           <div className="flex flex-col space-y-4">
-            {isAuthenticated && (
-              <Link
-                to="/dashboard"
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors py-2"
-              >
-                Dashboard
-              </Link>
-            )}
-
-            {isAuthenticated && user?.userId === specialUserId && (
-              <Link
-                to="/leetcode"
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors py-2"
-              >
-                Leetcode
-              </Link>
-            )}
+            {/* Dashboard link on mobile when on pricetracker */}
+            {isAuthenticated &&
+              location.startsWith("/pricetracker") &&
+              !location.startsWith("/pricetracker/dashboard") && (
+                <Link
+                  to="/pricetracker/dashboard"
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors py-2"
+                >
+                  Dashboard
+                </Link>
+              )}
 
             {showSignIn && (
               <Link

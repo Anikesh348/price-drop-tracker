@@ -6,7 +6,6 @@
 
 # IntelliJ / VS Code
 /backend/.idea/
-/backend/.env
 .vscode/
 *.iml
 /.idea
@@ -26,7 +25,10 @@ node_modules
 
 # Environment config
 .env
+.env.dev
+.env.prod
 
+# Deployment configs
 backend/fly.toml
 scrapper/fly.toml
 scraper-v2/fly.toml

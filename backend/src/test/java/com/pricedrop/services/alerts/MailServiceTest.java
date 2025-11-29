@@ -1,6 +1,5 @@
 package com.pricedrop.services.alerts;
 
-import io.vertx.core.Future;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,14 +19,15 @@ class MailServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testSendEmailReturnsFuture() {
         // Since sendEmail uses client.postAbs, we need to mock the full chain
         when(client.postAbs(anyString())
-            .putHeader(anyString(), anyString())
-            .putHeader(anyString(), anyString())
-            .putHeader(anyString(), anyString())
-            .sendJsonObject(any(JsonObject.class)))
-            .thenReturn(io.vertx.core.Future.succeededFuture(mock(io.vertx.ext.web.client.HttpResponse.class)));
+                .putHeader(anyString(), anyString())
+                .putHeader(anyString(), anyString())
+                .putHeader(anyString(), anyString())
+                .sendJsonObject(any(JsonObject.class)))
+                .thenReturn(io.vertx.core.Future.succeededFuture(mock(io.vertx.ext.web.client.HttpResponse.class)));
         var future = mailService.sendEmail("subject", "to@example.com", "body");
         assertNotNull(future);
     }

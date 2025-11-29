@@ -3,7 +3,6 @@ package com.pricedrop.services.jwt;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class JWTProviderTest {
     @Test
@@ -16,4 +15,3 @@ class JWTProviderTest {
         assertTrue(jwt.getExpiresAt().getTime() > System.currentTimeMillis());
     }
 }
-

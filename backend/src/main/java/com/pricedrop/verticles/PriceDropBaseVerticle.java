@@ -66,7 +66,8 @@ public class PriceDropBaseVerticle extends AbstractVerticle {
                             .handler(context -> new GetPriceHistory(mongoDBClient, context));
                     router.post("/api/protected/delete")
                             .handler(context -> new DeleteProduct(mongoDBClient, context));
-                    router.post("/api/protected/leetcode/add").handler(new AddQuestion(mongoDBClient)::handle);
+                    router.post("/api/protected/leetcode/add")
+                            .handler(new AddQuestionController(mongoDBClient, client)::handle);
                     router.get("/api/protected/leetcode/questions").handler(new GetQuestions(mongoDBClient)::handle);
                     router.post("/api/protected/leetcode/update-status")
                     .handler(new UpdateQuestionStatus(mongoDBClient)::handle);
